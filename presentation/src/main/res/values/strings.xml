@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="daily_quiz">Daily quiz</string>
+    <string name="welcome_to_dailyquiz">Добро пожаловать\nв DailyQuiz!</string>
+    <string name="start_the_quiz">Начать викторину</string>
+    <string name="history">История</string>
+    <string name="error_try_again">Ошибка! Попробуйте ещё раз</string>
+    <string name="back">back</string>
+    <string name="answer_state">answer state</string>
+    <string name="onward">Далее</string>
+    <string name="complete">Завершить</string>
+    <string name="rating_5_title">Идеально!</string>
+    <string name="rating_5_description">5/5 — вы ответили на всё правильно. Это блестящий результат!</string>
+    <string name="rating_4_title">Почти идеально!</string>
+    <string name="rating_4_description">4/5 — очень близко к совершенству. Ещё один шаг!</string>
+    <string name="rating_3_title">Хороший результат!</string>
+    <string name="rating_3_description">3/5 — вы на верном пути. Продолжайте тренироваться!</string>
+    <string name="rating_2_title">Есть над чем поработать</string>
+    <string name="rating_2_description">2/5 — не расстраивайтесь, попробуйте ещё раз!</string>
+    <string name="rating_1_title">Сложный вопрос?</string>
+    <string name="rating_1_description">1/5 — иногда просто не ваш день. Следующая попытка будет лучше!</string>
+    <string name="rating_0_title">Бывает и так!</string>
+    <string name="rating_0_description">0/5 — не отчаивайтесь. Начните заново и удивите себя!</string>
+    <string name="star">star</string>
+    <string name="from">из</string>
+    <string name="try_again">начать заново</string>
+    <string name="cant_return_to_previous_questions">Вернуться к предыдущим вопросам нельзя</string>
+    <string name="results">Результаты</string>
+</resources>

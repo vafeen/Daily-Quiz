@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import dagger.hilt.android.AndroidEntryPoint
+import ru.vafeen.presentation.ui.screens.quiz_screen.QuizScreen
 import ru.vafeen.presentation.ui.theme.DailyQuizTheme
 
 @AndroidEntryPoint
@@ -14,7 +15,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             DailyQuizTheme {
-
+                QuizScreen()
             }
         }
     }

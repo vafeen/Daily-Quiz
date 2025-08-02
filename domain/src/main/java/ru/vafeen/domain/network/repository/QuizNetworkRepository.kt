@@ -14,4 +14,8 @@ interface QuizNetworkRepository {
      * @return [ResponseResult] с успешным результатом — списком [QuizQuestion] либо с ошибкой.
      */
     suspend fun getQuiz(): ResponseResult<List<QuizQuestion>>
+
+    companion object {
+        const val COUNT_OF_QUESTIONS_IN_ONE_QUIZ = 5
+    }
 }
