@@ -1,5 +1,5 @@
 plugins {
-    alias(libs.plugins.android.application)
+    alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.kapt)
@@ -7,17 +7,14 @@ plugins {
 }
 
 android {
-    namespace = "ru.vafeen.dailyquiz"
+    namespace = "ru.vafeen.presentation"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "ru.vafeen.dailyquiz"
         minSdk = 24
-        targetSdk = 36
-        versionCode = 1
-        versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles("consumer-rules.pro")
     }
 
     buildTypes {
@@ -36,19 +33,26 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
-    buildFeatures {
-        compose = true
-    }
 }
 
 dependencies {
-    implementation(project(":presentation"))
-    implementation(project(":data"))
+    api(libs.bundles.core)
+    api(project(":domain"))
+    // Compose
+    api(platform(libs.androidx.compose.bom))
+    api(libs.bundles.compose)
+
+    // Compose tests
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.ui.test.junit4)
+    debugImplementation(libs.bundles.compose.debug)
 
     // Tests
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    // Compose Hilt viewModel
+    implementation(libs.androidx.hilt.navigation.compose)
     // hilt
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
