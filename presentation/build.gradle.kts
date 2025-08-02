@@ -48,7 +48,7 @@ dependencies {
     debugImplementation(libs.bundles.compose.debug)
 
     // Tests
-    testImplementation(libs.junit)
+    testImplementation(libs.bundles.test)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     // Compose Hilt viewModel

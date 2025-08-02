@@ -37,11 +37,14 @@ dependencies {
     api(libs.bundles.core)
     api(project(":domain"))
     // Tests
-    testImplementation(libs.junit)
+    testImplementation(libs.bundles.test)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     // other libs
     // hilt
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
+    // retrofit
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
 }
