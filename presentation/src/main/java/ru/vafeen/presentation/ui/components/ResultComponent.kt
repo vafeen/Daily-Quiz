@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.sp
 import ru.vafeen.domain.models.QuizResult
 import ru.vafeen.domain.network.repository.QuizNetworkRepository
 import ru.vafeen.presentation.R
-import ru.vafeen.presentation.ui.theme.StarTextColor
+import ru.vafeen.presentation.ui.theme.AppTheme
 
 /**
  * Компонент отображения результата викторины с рейтингом, количеством правильных ответов,
@@ -41,6 +41,7 @@ internal fun ResultComponent(
 ) {
     Card(
         shape = RoundedCornerShape(dimensionResource(R.dimen.card_corner_radius)),
+        colors = CardDefaults.cardColors(containerColor = AppTheme.colors.cardBackground)
     ) {
         Column(
             modifier = Modifier.padding(vertical = 32.dp, horizontal = 24.dp),
@@ -54,7 +55,7 @@ internal fun ResultComponent(
                         QuizNetworkRepository.COUNT_OF_QUESTIONS_IN_ONE_QUIZ,
                 fontWeight = FontWeight.Bold,
                 fontSize = 16.sp,
-                color = StarTextColor
+                color = AppTheme.colors.star
             )
             Spacer(modifier = Modifier.height(24.dp))
             Text(
@@ -89,7 +90,7 @@ internal fun ResultComponent(
                 Spacer(modifier = Modifier.height(64.dp))
                 RounderCornerButton(
                     onClick = onTryAgainClick,
-                    containerColor = MaterialTheme.colorScheme.primary
+                    containerColor = AppTheme.colors.background
                 ) {
                     Text(
                         text = stringResource(R.string.try_again).uppercase()

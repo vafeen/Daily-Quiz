@@ -12,8 +12,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -30,6 +28,7 @@ import ru.vafeen.presentation.R
 import ru.vafeen.presentation.navigation.SendRootIntent
 import ru.vafeen.presentation.ui.components.QuizHistoryInfoComponent
 import ru.vafeen.presentation.ui.components.YouNeverTakenAnyQuizzes
+import ru.vafeen.presentation.ui.theme.AppTheme
 
 /**
  * Экран истории сессий викторины.
@@ -49,78 +48,75 @@ internal fun HistoryScreen(
         })
     val state by viewModel.state.collectAsState()
 
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        containerColor = MaterialTheme.colorScheme.primary
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .padding(horizontal = 27.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth()) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 27.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth()) {
 
-                Text(
-                    modifier = Modifier.padding(top = 32.dp, bottom = 40.dp),
-                    text = stringResource(R.string.history),
-                    fontSize = 32.sp,
-                    fontWeight = FontWeight.Bold
+            Text(
+                modifier = Modifier.padding(top = 32.dp, bottom = 20.dp),
+                text = stringResource(R.string.history),
+                fontSize = 32.sp,
+                fontWeight = FontWeight.Bold,
+                color = AppTheme.colors.textOnBackground
+            )
+            IconButton(
+                modifier = Modifier
+                    .align(Alignment.CenterStart)
+                    .size(24.dp),
+                onClick = { viewModel.handleIntent(HistoryIntent.Back) },
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.arrow_back),
+                    contentDescription = stringResource(R.string.back),
+                    tint = AppTheme.colors.textOnBackground
                 )
-                IconButton(
-                    modifier = Modifier
-                        .align(Alignment.CenterStart)
-                        .size(24.dp),
-                    onClick = { viewModel.handleIntent(HistoryIntent.Back) }
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.arrow_back),
-                        contentDescription = stringResource(R.string.back)
+            }
+        }
+
+        if (state.sessions.isNotEmpty()) {
+            LazyColumn(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(24.dp)
+            ) {
+
+                items(
+                    items = state.sessions,
+                    key = { it.sessionId }
+                ) { session ->
+                    session.QuizHistoryInfoComponent(
+                        modifier = Modifier.fillMaxWidth(),
+                        onClick = {
+                            viewModel.handleIntent(
+                                HistoryIntent.NavigateToSession(session.sessionId)
+                            )
+                        }
                     )
                 }
             }
-
-            if (state.sessions.isNotEmpty()) {
-                LazyColumn(
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(24.dp)
-                ) {
-                    items(
-                        items = state.sessions,
-                        key = { it.sessionId }
-                    ) { session ->
-                        session.QuizHistoryInfoComponent(
-                            modifier = Modifier.fillMaxWidth(),
-                            onClick = {
-                                viewModel.handleIntent(
-                                    HistoryIntent.NavigateToSession(session.sessionId)
-                                )
-                            }
-                        )
-                    }
+        } else {
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(bottom = 76.dp),
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
+                YouNeverTakenAnyQuizzes {
+                    viewModel.handleIntent(HistoryIntent.ReturnToBeginning)
                 }
-            } else {
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(bottom = 76.dp),
-                    verticalArrangement = Arrangement.SpaceBetween
-                ) {
-                    YouNeverTakenAnyQuizzes {
-                        viewModel.handleIntent(HistoryIntent.ReturnToBeginning)
-                    }
 
-                    Image(
-                        modifier = Modifier
-                            .size(width = 180.dp, height = 40.dp)
-                            .align(Alignment.CenterHorizontally),
-                        painter = painterResource(R.drawable.daily_quiz),
-                        contentDescription = stringResource(R.string.daily_quiz)
-                    )
-                }
+                Image(
+                    modifier = Modifier
+                        .size(width = 180.dp, height = 40.dp)
+                        .align(Alignment.CenterHorizontally),
+                    painter = painterResource(R.drawable.daily_quiz),
+                    contentDescription = stringResource(R.string.daily_quiz)
+                )
             }
         }
     }

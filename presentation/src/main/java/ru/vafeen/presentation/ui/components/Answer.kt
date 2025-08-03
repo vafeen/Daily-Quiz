@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -54,9 +55,16 @@ internal fun Answer(
             AnswerState.Correct -> BorderStroke(width = borderWidth, color = DarkGreen)
             AnswerState.Incorrect -> BorderStroke(width = borderWidth, color = Color.Red)
         },
-        modifier = if (onClick != null) modifier.clickable(onClick = onClick) else modifier
+        modifier = modifier
     ) {
-        Row(modifier = Modifier.padding(16.dp)) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .let {
+                    if (onClick != null) it.clickable(onClick = onClick) else it
+                }
+                .padding(16.dp)
+        ) {
             Image(
                 modifier = Modifier.size(20.dp),
                 painter = painterResource(

@@ -8,16 +8,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ru.vafeen.presentation.R
+import ru.vafeen.presentation.ui.theme.AppTheme
 
 /**
  * Компонент, отображаемый, когда пользователь ещё не проходил ни одной викторины.
@@ -46,18 +45,19 @@ internal fun YouNeverTakenAnyQuizzes(
                 modifier = Modifier.fillMaxWidth(),
                 text = stringResource(id = R.string.you_never_taken_quizzes),
                 fontSize = 20.sp,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                color = AppTheme.colors.text
             )
             Spacer(modifier = Modifier.height(40.dp))
             RounderCornerButton(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = onStartQuiz,
-                containerColor = MaterialTheme.colorScheme.primary
+                containerColor = AppTheme.colors.background
             ) {
                 Text(
                     text = stringResource(R.string.start_the_quiz),
                     fontSize = 16.sp,
-                    color = Color.White
+                    color = AppTheme.colors.textOnBackground
                 )
             }
         }

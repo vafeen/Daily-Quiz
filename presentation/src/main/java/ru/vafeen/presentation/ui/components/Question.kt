@@ -12,12 +12,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -25,7 +23,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import ru.vafeen.domain.models.QuizQuestion
 import ru.vafeen.presentation.R
-import ru.vafeen.presentation.ui.theme.QuestionNumberColor
+import ru.vafeen.presentation.ui.theme.AppTheme
 
 /**
  * Компонент вопроса викторины с вариантами ответов и кнопкой подтверждения выбора.
@@ -55,10 +53,11 @@ internal fun Question(
 ) {
     Card(
         shape = RoundedCornerShape(dimensionResource(R.dimen.card_corner_radius)),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
+        colors = CardDefaults.cardColors(containerColor = AppTheme.colors.cardBackground)
     ) {
         Column(
-            modifier = Modifier.padding(24.dp),
+            modifier = Modifier
+                .padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
 
@@ -68,7 +67,7 @@ internal fun Question(
             ) {
                 Text(
                     text = "Вопрос $numberOfCurrentQuestion из $quantityOfQuestions",
-                    color = QuestionNumberColor
+                    color = AppTheme.colors.questionNumberColor
                 )
                 if (isItResult != null) {
                     Image(
@@ -84,7 +83,8 @@ internal fun Question(
             Spacer(modifier = Modifier.height(24.dp))
             Text(
                 text = currentQuestion.question,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                color = AppTheme.colors.text
             )
             Spacer(modifier = Modifier.height(24.dp))
             currentQuestion.allAnswers.forEach { answer ->
@@ -123,12 +123,13 @@ internal fun Question(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = confirmAnswer,
                     enabled = chosenAnswer != null,
-                    containerColor = MaterialTheme.colorScheme.primary
+                    containerColor = AppTheme.colors.background
                 ) {
                     Text(
                         text = if (quantityOfQuestions == numberOfCurrentQuestion)
                             stringResource(R.string.complete)
-                        else stringResource(R.string.onward)
+                        else stringResource(R.string.onward),
+                        color = AppTheme.colors.textOnBackground
                     )
                 }
             }

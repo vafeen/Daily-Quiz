@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,7 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ru.vafeen.domain.models.QuizSessionResultPreview
-import ru.vafeen.presentation.ui.theme.DarkBlue
+import ru.vafeen.presentation.ui.theme.AppTheme
 
 /**
  * Компонент для отображения краткой информации о сессии викторины в списке истории.
@@ -37,7 +38,8 @@ internal fun QuizSessionResultPreview.QuizHistoryInfoComponent(
 ) {
     Card(
         modifier = modifier,
-        shape = RoundedCornerShape(40.dp)
+        shape = RoundedCornerShape(40.dp),
+        colors = CardDefaults.cardColors(containerColor = AppTheme.colors.cardBackground)
     ) {
         Column(
             modifier = Modifier
@@ -52,7 +54,7 @@ internal fun QuizSessionResultPreview.QuizHistoryInfoComponent(
                 Text(
                     text = name,
                     fontSize = 24.sp,
-                    color = DarkBlue,
+                    color = AppTheme.colors.quizNameText,
                     style = MaterialTheme.typography.titleMedium
                 )
                 Stars(
@@ -69,12 +71,14 @@ internal fun QuizSessionResultPreview.QuizHistoryInfoComponent(
                 Text(
                     text = date,
                     fontSize = 12.sp,
-                    style = MaterialTheme.typography.bodySmall
+                    style = MaterialTheme.typography.bodySmall,
+                    color = AppTheme.colors.text
                 )
                 Text(
                     text = time,
                     fontSize = 12.sp,
-                    style = MaterialTheme.typography.bodySmall
+                    style = MaterialTheme.typography.bodySmall,
+                    color = AppTheme.colors.text
                 )
             }
         }

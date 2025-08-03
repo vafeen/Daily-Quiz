@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -32,6 +30,7 @@ import ru.vafeen.presentation.navigation.NavRootIntent
 import ru.vafeen.presentation.ui.components.Question
 import ru.vafeen.presentation.ui.components.ResultComponent
 import ru.vafeen.presentation.ui.components.RounderCornerButton
+import ru.vafeen.presentation.ui.theme.AppTheme
 
 /**
  * Экран с результатами сессии викторины.
@@ -57,84 +56,82 @@ internal fun QuizSessionResultScreen(
             })
     val state by viewModel.state.collectAsState()
 
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        containerColor = MaterialTheme.colorScheme.primary
-    ) { innerPadding ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .padding(horizontal = 27.dp),
-            verticalArrangement = Arrangement.spacedBy(24.dp)
-        ) {
-            item {
-                Spacer(modifier = Modifier.height(32.dp))
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier.fillMaxWidth()
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 27.dp),
+        verticalArrangement = Arrangement.spacedBy(24.dp)
+    ) {
+        item {
+            Spacer(modifier = Modifier.height(32.dp))
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                IconButton(
+                    modifier = Modifier
+                        .align(Alignment.CenterStart)
+                        .size(24.dp),
+                    onClick = { viewModel.handleIntent(QuizSessionResultIntent.Back) }
                 ) {
-                    IconButton(
-                        modifier = Modifier
-                            .align(Alignment.CenterStart)
-                            .size(24.dp),
-                        onClick = { viewModel.handleIntent(QuizSessionResultIntent.Back) }
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.arrow_back),
-                            contentDescription = stringResource(R.string.back)
-                        )
-                    }
-
-                    Text(
-                        text = stringResource(R.string.results),
-                        fontSize = 32.sp,
-                        fontWeight = FontWeight.Bold
+                    Icon(
+                        painter = painterResource(R.drawable.arrow_back),
+                        contentDescription = stringResource(R.string.back),
+                        tint = AppTheme.colors.textOnBackground
                     )
                 }
-            }
-            state.quizResult?.let {
-                item { ResultComponent(it) }
-            }
 
-            item {
                 Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Center,
-                    text = "Твои ответы",
+                    text = stringResource(R.string.results),
                     fontSize = 32.sp,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    color = AppTheme.colors.textOnBackground
                 )
             }
-            state.quizSessionResult?.results?.let { results ->
-                results.forEachIndexed { index, question ->
-                    item {
-                        Question(
-                            currentQuestion = question,
-                            numberOfCurrentQuestion = index + 1,
-                            quantityOfQuestions = results.size,
-                            chosenAnswer = question.chosenAnswer,
-                            chooseAnswer = null,
-                            confirmAnswer = null,
-                            isItResult = question.correctAnswer == question.chosenAnswer
-                        )
-                    }
-                }
-            }
-            item {
-                RounderCornerButton(
-                    onClick = { viewModel.handleIntent(QuizSessionResultIntent.ReturnToBeginning) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 30.dp),
-                    containerColor = Color.White,
-                ) {
-                    Text(
-                        text = stringResource(R.string.start_over).uppercase(),
-                        color = Color.Black
+        }
+        state.quizResult?.let {
+            item { ResultComponent(it) }
+        }
+
+        item {
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center,
+                text = stringResource(R.string.your_answers),
+                fontSize = 32.sp,
+                fontWeight = FontWeight.Bold,
+                color = AppTheme.colors.textOnBackground
+            )
+        }
+        state.quizSessionResult?.results?.let { results ->
+            results.forEachIndexed { index, question ->
+                item {
+                    Question(
+                        currentQuestion = question,
+                        numberOfCurrentQuestion = index + 1,
+                        quantityOfQuestions = results.size,
+                        chosenAnswer = question.chosenAnswer,
+                        chooseAnswer = null,
+                        confirmAnswer = null,
+                        isItResult = question.correctAnswer == question.chosenAnswer
                     )
                 }
             }
         }
+        item {
+            RounderCornerButton(
+                onClick = { viewModel.handleIntent(QuizSessionResultIntent.ReturnToBeginning) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 30.dp),
+                containerColor = Color.White,
+            ) {
+                Text(
+                    text = stringResource(R.string.start_over).uppercase(),
+                    color = Color.Black
+                )
+            }
+        }
     }
+
 }

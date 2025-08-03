@@ -16,7 +16,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -40,6 +39,7 @@ import ru.vafeen.presentation.ui.components.LoadingQuiz
 import ru.vafeen.presentation.ui.components.Question
 import ru.vafeen.presentation.ui.components.ResultComponent
 import ru.vafeen.presentation.ui.components.Welcome
+import ru.vafeen.presentation.ui.theme.AppTheme
 
 /**
  * Компонент экрана викторины, отображающий различные состояния викторины,
@@ -59,149 +59,145 @@ internal fun QuizScreen(
         })
     val state by viewModel.state.collectAsState()
 
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        containerColor = MaterialTheme.colorScheme.primary
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(horizontal = 26.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            if (state !is QuizState.Quiz && state !is QuizState.Result) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    if (state is QuizState.Start || state is QuizState.Error) {
-                        Button(
-                            onClick = {
-                                viewModel.handleIntent(QuizIntent.NavigateToHistory)
-                            },
-                            colors = ButtonDefaults.buttonColors(containerColor = Color.White)
-                        ) {
-                            Text(
-                                stringResource(R.string.history),
-                                fontSize = 12.sp,
-                                color = MaterialTheme.colorScheme.primary
-                            )
-                            Spacer(modifier = Modifier.width(12.dp))
-                            Icon(
-                                modifier = Modifier.size(16.dp),
-                                painter = painterResource(R.drawable.history),
-                                contentDescription = stringResource(R.string.history),
-                                tint = MaterialTheme.colorScheme.primary
-                            )
-                        }
-                    }
-                }
-            }
-
-            if (state !is QuizState.Result) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 15.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    if (state is QuizState.Quiz) {
-                        BackHandler {
-                            viewModel.handleIntent(QuizIntent.ReturnToBeginning)
-                        }
-                        IconButton(
-                            modifier = Modifier
-                                .align(Alignment.CenterStart)
-                                .size(24.dp),
-                            onClick = { viewModel.handleIntent(QuizIntent.ReturnToBeginning) }
-                        ) {
-                            Icon(
-                                painter = painterResource(R.drawable.arrow_back),
-                                contentDescription = stringResource(R.string.back)
-                            )
-                        }
-                    }
-                    Image(
-                        modifier = Modifier.size(
-                            width = if (state is QuizState.Quiz) 180.dp else 300.dp,
-                            height = if (state is QuizState.Quiz) 40.dp else 68.dp
-                        ),
-                        painter = painterResource(R.drawable.daily_quiz),
-                        contentDescription = stringResource(R.string.daily_quiz)
-                    )
-                }
-            }
-
-            when (state) {
-                is QuizState.Start -> {
-                    Welcome {
-                        viewModel.handleIntent(QuizIntent.BeginQuiz)
-                    }
-                }
-
-                is QuizState.Error -> {
-                    Welcome {
-                        viewModel.handleIntent(QuizIntent.BeginQuiz)
-                    }
-                    Error()
-                }
-
-                is QuizState.Loading -> {
-                    LoadingQuiz()
-                }
-
-                is QuizState.Quiz -> {
-                    Spacer(modifier = Modifier.height(40.dp))
-                    (state as QuizState.Quiz).let {
-                        Question(
-                            currentQuestion = it.currentQuestion,
-                            numberOfCurrentQuestion = it.passedQuestions.size + 1,
-                            quantityOfQuestions = it.questions.size + it.passedQuestions.size,
-                            chosenAnswer = it.chosenAnswer,
-                            chooseAnswer = { answer ->
-                                viewModel.handleIntent(QuizIntent.ChoseAnswer(answer))
-                            },
-                            confirmAnswer = {
-                                viewModel.handleIntent(QuizIntent.ConfirmChosenAnswer)
-                            }
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 26.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        if (state !is QuizState.Quiz && state !is QuizState.Result) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                if (state is QuizState.Start || state is QuizState.Error) {
+                    Button(
+                        onClick = {
+                            viewModel.handleIntent(QuizIntent.NavigateToHistory)
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color.White)
+                    ) {
+                        Text(
+                            stringResource(R.string.history),
+                            fontSize = 12.sp,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Icon(
+                            modifier = Modifier.size(16.dp),
+                            painter = painterResource(R.drawable.history),
+                            contentDescription = stringResource(R.string.history),
+                            tint = MaterialTheme.colorScheme.primary
                         )
                     }
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Text(
-                        text = stringResource(R.string.cant_return_to_previous_questions),
-                        color = Color.White,
-                        fontSize = 15.sp
-                    )
                 }
+            }
+        }
 
-                is QuizState.Result -> {
+        if (state !is QuizState.Result) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 15.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                if (state is QuizState.Quiz) {
                     BackHandler {
                         viewModel.handleIntent(QuizIntent.ReturnToBeginning)
                     }
-                    Spacer(modifier = Modifier.height(32.dp))
-                    Text(
-                        modifier = Modifier.fillMaxWidth(),
-                        textAlign = TextAlign.Center,
-                        text = stringResource(R.string.results),
-                        fontSize = 32.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Spacer(modifier = Modifier.height(40.dp))
-                    val quizStateResult by remember {
-                        derivedStateOf {
-                            state as QuizState.Result
-                        }
+                    IconButton(
+                        modifier = Modifier
+                            .align(Alignment.CenterStart)
+                            .size(24.dp),
+                        onClick = { viewModel.handleIntent(QuizIntent.ReturnToBeginning) }
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.arrow_back),
+                            contentDescription = stringResource(R.string.back),
+                            tint = AppTheme.colors.textOnBackground
+                        )
                     }
-                    ResultComponent(
-                        quizResult = quizStateResult.quizResult,
-                        onTryAgainClick = {
-                            viewModel.handleIntent(QuizIntent.ReturnToBeginning)
+                }
+                Image(
+                    modifier = Modifier.size(
+                        width = if (state is QuizState.Quiz) 180.dp else 300.dp,
+                        height = if (state is QuizState.Quiz) 40.dp else 68.dp
+                    ),
+                    painter = painterResource(R.drawable.daily_quiz),
+                    contentDescription = stringResource(R.string.daily_quiz)
+                )
+            }
+        }
+
+        when (state) {
+            is QuizState.Start -> {
+                Welcome {
+                    viewModel.handleIntent(QuizIntent.BeginQuiz)
+                }
+            }
+
+            is QuizState.Error -> {
+                Welcome {
+                    viewModel.handleIntent(QuizIntent.BeginQuiz)
+                }
+                Error()
+            }
+
+            is QuizState.Loading -> {
+                LoadingQuiz()
+            }
+
+            is QuizState.Quiz -> {
+                Spacer(modifier = Modifier.height(40.dp))
+                (state as QuizState.Quiz).let {
+                    Question(
+                        currentQuestion = it.currentQuestion,
+                        numberOfCurrentQuestion = it.passedQuestions.size + 1,
+                        quantityOfQuestions = it.questions.size + it.passedQuestions.size,
+                        chosenAnswer = it.chosenAnswer,
+                        chooseAnswer = { answer ->
+                            viewModel.handleIntent(QuizIntent.ChoseAnswer(answer))
+                        },
+                        confirmAnswer = {
+                            viewModel.handleIntent(QuizIntent.ConfirmChosenAnswer)
                         }
                     )
                 }
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = stringResource(R.string.cant_return_to_previous_questions),
+                    color = Color.White,
+                    fontSize = 15.sp
+                )
+            }
+
+            is QuizState.Result -> {
+                BackHandler {
+                    viewModel.handleIntent(QuizIntent.ReturnToBeginning)
+                }
+                Spacer(modifier = Modifier.height(32.dp))
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center,
+                    text = stringResource(R.string.results),
+                    fontSize = 32.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = AppTheme.colors.textOnBackground
+                )
+                Spacer(modifier = Modifier.height(40.dp))
+                val quizStateResult by remember {
+                    derivedStateOf {
+                        state as QuizState.Result
+                    }
+                }
+                ResultComponent(
+                    quizResult = quizStateResult.quizResult,
+                    onTryAgainClick = {
+                        viewModel.handleIntent(QuizIntent.ReturnToBeginning)
+                    }
+                )
             }
         }
     }

@@ -42,4 +42,5 @@
     </string-array>
     <string name="you_never_taken_quizzes">Вы еще не проходили \nни одной викторины</string>
     <string name="start_over">Начать заново</string>
+    <string name="your_answers">Твои ответы</string>
 </resources>
