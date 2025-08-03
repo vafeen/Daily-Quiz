@@ -9,8 +9,8 @@ import ru.vafeen.data.local_database.dao.QuizDao
 import ru.vafeen.data.local_database.entity.QuizSessionEntity
 import ru.vafeen.domain.local_database.repository.QuizResultLocalRepository
 import ru.vafeen.domain.models.QuizQuestion
-import ru.vafeen.domain.models.QuizSessionPreview
 import ru.vafeen.domain.models.QuizSessionResult
+import ru.vafeen.domain.models.QuizSessionResultPreview
 import java.time.LocalDateTime
 import javax.inject.Inject
 
@@ -29,9 +29,9 @@ internal class RoomQuizResultLocalRepository @Inject constructor(
      * Получить поток со списком превью всех сессий из базы данных.
      *
      * @param months Список названий месяцев (индексируется с 0 — январь) для форматирования даты.
-     * @return [Flow] списка [QuizSessionPreview].
+     * @return [Flow] списка [QuizSessionResultPreview].
      */
-    override fun getAllSessionPreviews(months: List<String>): Flow<List<QuizSessionPreview>> =
+    override fun getAllSessionPreviews(months: List<String>): Flow<List<QuizSessionResultPreview>> =
         quizDao.getAllSessions()
             .map { list -> list.map { it.toDomainPreview(months) } }
 

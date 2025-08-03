@@ -2,6 +2,9 @@ package ru.vafeen.presentation.ui.screens.quiz_screen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,15 +16,19 @@ import ru.vafeen.domain.models.QuizQuestion
 import ru.vafeen.domain.models.QuizResult
 import ru.vafeen.domain.network.ResponseResult
 import ru.vafeen.domain.network.usecase.GetQuizUseCase
-import javax.inject.Inject
+import ru.vafeen.presentation.navigation.NavRootIntent
+import ru.vafeen.presentation.navigation.Screen
+import ru.vafeen.presentation.navigation.SendRootIntent
 
 /**
  * ViewModel экрана викторины, управляющая состояниями викторины и обработкой пользовательских действий.
  *
  * @property getQuizUseCase use case для загрузки вопросов викторины.
  */
-@HiltViewModel
-internal class QuizViewModel @Inject constructor(
+@HiltViewModel(assistedFactory = QuizViewModel.Factory::class)
+internal class QuizViewModel @AssistedInject constructor(
+    @Assisted private val isQuizStarted: Boolean,
+    @Assisted private val sendRootIntent: SendRootIntent,
     private val getQuizUseCase: GetQuizUseCase,
     private val saveQuizSessionResultUseCase: SaveQuizSessionResultUseCase,
 ) : ViewModel() {
@@ -42,6 +49,14 @@ internal class QuizViewModel @Inject constructor(
                 is QuizIntent.ChoseAnswer -> choseAnswer(intent.answer)
                 QuizIntent.ConfirmChosenAnswer -> confirmAnswer()
                 QuizIntent.TryAgain -> tryAgain()
+            }
+        }
+    }
+
+    init {
+        viewModelScope.launch(Dispatchers.IO) {
+            if (isQuizStarted) {
+                beginQuiz()
             }
         }
     }
@@ -114,7 +129,7 @@ internal class QuizViewModel @Inject constructor(
      * Пока не реализовано.
      */
     private fun navigateToHistory() {
-        // TODO: добавить навигацию к истории
+        sendRootIntent(NavRootIntent.AddToBackStack(Screen.HistoryScreen))
     }
 
     /**
@@ -139,5 +154,10 @@ internal class QuizViewModel @Inject constructor(
 
             is ResponseResult.Error -> _state.update { QuizState.Error }
         }
+    }
+
+    @AssistedFactory
+    interface Factory {
+        fun create(isQuizStarted: Boolean, sendRootIntent: SendRootIntent): QuizViewModel
     }
 }

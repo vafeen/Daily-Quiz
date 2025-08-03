@@ -5,8 +5,8 @@ import ru.vafeen.data.local_database.entity.QuizQuestionResultEntity
 import ru.vafeen.data.local_database.entity.QuizSessionEntity
 import ru.vafeen.data.local_database.tuple.QuizSessionWithResultsTuple
 import ru.vafeen.domain.models.QuizQuestion
-import ru.vafeen.domain.models.QuizSessionPreview
 import ru.vafeen.domain.models.QuizSessionResult
+import ru.vafeen.domain.models.QuizSessionResultPreview
 import java.time.LocalDateTime
 
 /**
@@ -61,10 +61,10 @@ internal fun QuizQuestionResultEntity.toDomain(): QuizQuestion = QuizQuestion(
  * превью сессии викторины с форматированными датой и временем.
  *
  * @param months Список названий месяцев (например, на русском), индексируется с 0 (январь).
- * @return Доменная модель превью сессии [QuizSessionPreview] с отформатированными полями date и time.
+ * @return Доменная модель превью сессии [QuizSessionResultPreview] с отформатированными полями date и time.
  */
-internal fun QuizSessionEntity.toDomainPreview(months: List<String>): QuizSessionPreview =
-    QuizSessionPreview(
+internal fun QuizSessionEntity.toDomainPreview(months: List<String>): QuizSessionResultPreview =
+    QuizSessionResultPreview(
         sessionId = sessionId,
         date = formatDate(dateTime, months),
         time = formatTime(dateTime),

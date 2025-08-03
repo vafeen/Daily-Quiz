@@ -29,7 +29,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.vafeen.presentation.R
+import ru.vafeen.presentation.navigation.NavRootIntent
 import ru.vafeen.presentation.ui.components.Error
 import ru.vafeen.presentation.ui.components.LoadingQuiz
 import ru.vafeen.presentation.ui.components.Question
@@ -44,8 +46,16 @@ import ru.vafeen.presentation.ui.components.Welcome
  */
 @Composable
 internal fun QuizScreen(
-    viewModel: QuizViewModel = hiltViewModel()
+    isQuizStarted: Boolean,
+    sendRootIntent: (NavRootIntent) -> Unit
 ) {
+    val viewModel: QuizViewModel =
+        hiltViewModel<QuizViewModel, QuizViewModel.Factory>(creationCallback = { factory ->
+            factory.create(
+                isQuizStarted = isQuizStarted,
+                sendRootIntent = sendRootIntent
+            )
+        })
     val state by viewModel.state.collectAsState()
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -159,16 +169,33 @@ internal fun QuizScreen(
 
                 is QuizState.Result -> {
                     Spacer(modifier = Modifier.height(32.dp))
-                    Text(
-                        text = stringResource(R.string.results),
-                        fontSize = 32.sp,
-                        fontWeight = FontWeight.Bold
-                    )
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        IconButton(
+                            modifier = Modifier
+                                .align(Alignment.CenterStart)
+                                .size(24.dp),
+                            onClick = { viewModel.handleIntent(QuizIntent.ReturnToBeginning) }
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.arrow_back),
+                                contentDescription = stringResource(R.string.back)
+                            )
+                        }
+
+                        Text(
+                            text = stringResource(R.string.results),
+                            fontSize = 32.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
                     Spacer(modifier = Modifier.height(40.dp))
                     ResultComponent(
                         state = state as QuizState.Result,
                         onTryAgainClick = {
-                            viewModel.handleIntent(QuizIntent.TryAgain)
+                            viewModel.handleIntent(QuizIntent.BeginQuiz)
                         }
                     )
                 }

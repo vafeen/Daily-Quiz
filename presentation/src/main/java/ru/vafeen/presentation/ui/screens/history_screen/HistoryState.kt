@@ -1,6 +1,6 @@
 package ru.vafeen.presentation.ui.screens.history_screen
 
-import ru.vafeen.domain.models.QuizSessionPreview
+import ru.vafeen.domain.models.QuizSessionResultPreview
 
 /**
  * Состояние экрана истории сессий викторины.
@@ -8,5 +8,5 @@ import ru.vafeen.domain.models.QuizSessionPreview
  * @property sessions Список превью сессий викторины, отображаемых на экране.
  */
 data class HistoryState(
-    val sessions: List<QuizSessionPreview> = listOf()
+    val sessions: List<QuizSessionResultPreview> = listOf()
 )

@@ -2,8 +2,8 @@ package ru.vafeen.domain.local_database.repository
 
 import kotlinx.coroutines.flow.Flow
 import ru.vafeen.domain.models.QuizQuestion
-import ru.vafeen.domain.models.QuizSessionPreview
 import ru.vafeen.domain.models.QuizSessionResult
+import ru.vafeen.domain.models.QuizSessionResultPreview
 
 /**
  * Репозиторий локального хранения результатов викторины.
@@ -19,9 +19,9 @@ interface QuizResultLocalRepository {
      * Используется для отображения краткой информации о сессиях,
      * например, в списках истории.
      *
-     * @return [Flow] списка [QuizSessionPreview].
+     * @return [Flow] списка [QuizSessionResultPreview].
      */
-    fun getAllSessionPreviews(months: List<String>): Flow<List<QuizSessionPreview>>
+    fun getAllSessionPreviews(months: List<String>): Flow<List<QuizSessionResultPreview>>
 
     /**
      * Получить полную сессию викторины с результатами по идентификатору.

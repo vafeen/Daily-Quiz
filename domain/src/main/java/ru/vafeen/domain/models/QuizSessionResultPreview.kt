@@ -12,7 +12,7 @@ package ru.vafeen.domain.models
  * @property name Название или имя сессии/пользователя.
  * @property countOfRightAnswers Количество правильно отвеченных вопросов в сессии.
  */
-data class QuizSessionPreview(
+data class QuizSessionResultPreview(
     val sessionId: Long,
     val date: String,
     val time: String,

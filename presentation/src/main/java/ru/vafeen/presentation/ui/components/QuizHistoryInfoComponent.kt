@@ -17,21 +17,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import ru.vafeen.domain.models.QuizSessionPreview
+import ru.vafeen.domain.models.QuizSessionResultPreview
 import ru.vafeen.presentation.ui.theme.DarkBlue
 
 /**
  * Компонент для отображения краткой информации о сессии викторины в списке истории.
  *
- * В качестве расширения на [QuizSessionPreview], отображает имя сессии, количество правильных ответов
+ * В качестве расширения на [QuizSessionResultPreview], отображает имя сессии, количество правильных ответов
  * в виде звёзд, а также дату и время сессии.
  *
- * @receiver [QuizSessionPreview] - данные сессии, которые отображаются.
+ * @receiver [QuizSessionResultPreview] - данные сессии, которые отображаются.
  * @param modifier [Modifier] для настройки внешнего вида компонента.
  * @param onClick Лямбда, вызываемая при нажатии на карточку сессии.
  */
 @Composable
-internal fun QuizSessionPreview.QuizHistoryInfoComponent(
+internal fun QuizSessionResultPreview.QuizHistoryInfoComponent(
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {

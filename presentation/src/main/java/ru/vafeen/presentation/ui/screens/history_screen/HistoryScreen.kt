@@ -23,7 +23,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.vafeen.presentation.R
+import ru.vafeen.presentation.navigation.NavRootIntent
 import ru.vafeen.presentation.ui.components.QuizHistoryInfoComponent
 import ru.vafeen.presentation.ui.components.YouNeverTakenAnyQuizzes
 
@@ -36,8 +38,12 @@ import ru.vafeen.presentation.ui.components.YouNeverTakenAnyQuizzes
  */
 @Composable
 internal fun HistoryScreen(
-    viewModel: HistoryViewModel = hiltViewModel()
+    sendRootIntent: (NavRootIntent) -> Unit,
 ) {
+    val viewModel: HistoryViewModel =
+        hiltViewModel<HistoryViewModel, HistoryViewModel.Factory>(creationCallback = { factory ->
+            factory.create(sendRootIntent)
+        })
     val state by viewModel.state.collectAsState()
 
     Scaffold(
