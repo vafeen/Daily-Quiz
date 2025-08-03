@@ -79,6 +79,7 @@ internal class HistoryViewModel @AssistedInject constructor(
             NavRootIntent.AddToBackStack(Screen.QuizSessionResult(sessionId = sessionId))
         )
 
+
     /**
      * Инициирует запуск новой викторины.
      */
