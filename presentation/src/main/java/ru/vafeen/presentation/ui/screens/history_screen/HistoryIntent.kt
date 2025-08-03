@@ -25,4 +25,9 @@ internal sealed class HistoryIntent {
      * Интент навигации назад (эквивалент нажатия кнопки "назад").
      */
     data object Back : HistoryIntent()
+
+    /**
+     * Интент удаления сессии по id.
+     */
+    data class DeleteSession(val sessionId: Long) : HistoryIntent()
 }

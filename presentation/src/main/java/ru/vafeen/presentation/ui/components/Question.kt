@@ -19,8 +19,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import ru.vafeen.domain.models.QuizQuestion
 import ru.vafeen.presentation.R
 import ru.vafeen.presentation.ui.theme.AppTheme
@@ -84,7 +86,9 @@ internal fun Question(
             Text(
                 text = currentQuestion.question,
                 textAlign = TextAlign.Center,
-                color = AppTheme.colors.text
+                color = AppTheme.colors.text,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.height(24.dp))
             currentQuestion.allAnswers.forEach { answer ->

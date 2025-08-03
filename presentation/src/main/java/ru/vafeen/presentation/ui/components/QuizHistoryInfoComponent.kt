@@ -1,6 +1,5 @@
 package ru.vafeen.presentation.ui.components
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -29,12 +28,12 @@ import ru.vafeen.presentation.ui.theme.AppTheme
  *
  * @receiver [QuizSessionResultPreview] - данные сессии, которые отображаются.
  * @param modifier [Modifier] для настройки внешнего вида компонента.
- * @param onClick Лямбда, вызываемая при нажатии на карточку сессии.
+
  */
 @Composable
 internal fun QuizSessionResultPreview.QuizHistoryInfoComponent(
     modifier: Modifier = Modifier,
-    onClick: () -> Unit
+    innerModifier: Modifier,
 ) {
     Card(
         modifier = modifier,
@@ -42,9 +41,7 @@ internal fun QuizSessionResultPreview.QuizHistoryInfoComponent(
         colors = CardDefaults.cardColors(containerColor = AppTheme.colors.cardBackground)
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable(onClick = onClick)
+            modifier = innerModifier
                 .padding(24.dp)
         ) {
             Row(

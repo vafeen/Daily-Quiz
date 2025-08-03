@@ -26,6 +26,7 @@
     <string name="try_again">начать заново</string>
     <string name="cant_return_to_previous_questions">Вернуться к предыдущим вопросам нельзя</string>
     <string name="results">Результаты</string>
+    <string name="delete">Удалить</string>
     <string-array name="months">
         <item>января</item>
         <item>февраля</item>

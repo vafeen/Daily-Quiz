@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import ru.vafeen.domain.local_database.repository.QuizResultLocalRepository
 import ru.vafeen.domain.local_database.usecase.GetAllSessionPreviewUseCase
 import ru.vafeen.presentation.R
 import ru.vafeen.presentation.navigation.NavRootIntent
@@ -34,7 +35,8 @@ import ru.vafeen.presentation.navigation.SendRootIntent
 internal class HistoryViewModel @AssistedInject constructor(
     @Assisted private val sendRootIntent: SendRootIntent,
     @ApplicationContext private val context: Context,
-    private val getAllSessionPreviewUseCase: GetAllSessionPreviewUseCase
+    private val getAllSessionPreviewUseCase: GetAllSessionPreviewUseCase,
+    private val quizResultLocalRepository: QuizResultLocalRepository,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(HistoryState())
@@ -55,6 +57,7 @@ internal class HistoryViewModel @AssistedInject constructor(
                 is HistoryIntent.NavigateToSession -> navigateToSession(intent.id)
                 HistoryIntent.ReturnToBeginning -> startQuiz()
                 HistoryIntent.Back -> back()
+                is HistoryIntent.DeleteSession -> deleteSession(intent.sessionId)
             }
         }
     }
@@ -89,6 +92,13 @@ internal class HistoryViewModel @AssistedInject constructor(
      * Выполняет возврат на главный экран для запуска викторины.
      */
     private fun startQuiz() = sendRootIntent(NavRootIntent.Back)
+
+    /**
+     * Удаляет сессию по id, обновляет список сессий.
+     */
+    private suspend fun deleteSession(sessionId: Long) {
+        quizResultLocalRepository.deleteSession(sessionId)
+    }
 
     /**
      * Фабрика для создания экземпляров [HistoryViewModel] с необходимыми параметрами.
