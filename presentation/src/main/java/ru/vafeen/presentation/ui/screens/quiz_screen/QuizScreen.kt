@@ -29,7 +29,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.vafeen.presentation.R
 import ru.vafeen.presentation.navigation.NavRootIntent
 import ru.vafeen.presentation.ui.components.Error
@@ -42,7 +41,8 @@ import ru.vafeen.presentation.ui.components.Welcome
  * Компонент экрана викторины, отображающий различные состояния викторины,
  * управляемые через [QuizViewModel].
  *
- * @param viewModel ViewModel для управления состояниями и обработкой интентов.
+ * @param isQuizStarted флаг, указывающий, началась ли викторина
+ * @param sendRootIntent функция для отправки навигационных интентов в корневой навигационный обработчик
  */
 @Composable
 internal fun QuizScreen(

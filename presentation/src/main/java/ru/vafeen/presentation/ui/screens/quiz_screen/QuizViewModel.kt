@@ -23,7 +23,10 @@ import ru.vafeen.presentation.navigation.SendRootIntent
 /**
  * ViewModel экрана викторины, управляющая состояниями викторины и обработкой пользовательских действий.
  *
- * @property getQuizUseCase use case для загрузки вопросов викторины.
+ * @property isQuizStarted флаг, указывающий, началась ли викторина при запуске ViewModel
+ * @property sendRootIntent функция для отправки навигационных интентов в корневой навигационный обработчик
+ * @property getQuizUseCase юзкейc для получения вопросов викторины
+ * @property saveQuizSessionResultUseCase юзкейc для сохранения результатов сессии викторины
  */
 @HiltViewModel(assistedFactory = QuizViewModel.Factory::class)
 internal class QuizViewModel @AssistedInject constructor(
@@ -33,12 +36,16 @@ internal class QuizViewModel @AssistedInject constructor(
     private val saveQuizSessionResultUseCase: SaveQuizSessionResultUseCase,
 ) : ViewModel() {
     private val _state = MutableStateFlow<QuizState>(QuizState.Start)
+
+    /**
+     * Текущее состояние экрана викторины.
+     */
     val state = _state.asStateFlow()
 
     /**
      * Обрабатывает интенты (действия) от UI.
      *
-     * @param intent Интент пользователя.
+     * @param intent интент пользователя с описанием действия
      */
     fun handleIntent(intent: QuizIntent) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -62,8 +69,8 @@ internal class QuizViewModel @AssistedInject constructor(
     }
 
     /**
-     * Подтверждает выбранный ответ, обновляет состояние текущего вопроса либо переходит к следующему,
-     * а по окончании викторины вычисляет результат и переходит в состояние результата.
+     * Подтверждает выбранный ответ, обновляет состояние текущего вопроса либо переходит к следующему вопросу.
+     * По окончании викторины вычисляет результат, устанавливает состояние результата и сохраняет сессию.
      */
     private suspend fun confirmAnswer() {
         val state = _state.value
@@ -77,7 +84,7 @@ internal class QuizViewModel @AssistedInject constructor(
                 } else {
                     val newStateWithNewQuestions = state.copy(
                         questions = state.questions.filter { it.question != state.currentQuestion.question },
-                        passedQuestions = state.passedQuestions.plus(state.currentQuestion)
+                        passedQuestions = state.passedQuestions + state.currentQuestion
                     )
                     val newCurrentQuestion = newStateWithNewQuestions.questions.firstOrNull()
                     val newStateWithNewQuestionsAndAnswer = newStateWithNewQuestions.copy(
@@ -95,6 +102,7 @@ internal class QuizViewModel @AssistedInject constructor(
                                 quizResult = QuizResult.getByCount(countOfRightAnswers)
                             )
                         }
+
                         saveQuizSessionResultUseCase.invoke(
                             countOfRightAnswers,
                             questions = newStateWithNewQuestionsAndAnswer.passedQuestions
@@ -106,9 +114,9 @@ internal class QuizViewModel @AssistedInject constructor(
     }
 
     /**
-     * Устанавливает выбранный ответ в состояние.
+     * Устанавливает выбранный пользователем ответ в состояние.
      *
-     * @param answer Выбранный пользователем ответ.
+     * @param answer выбранный ответ
      */
     private fun choseAnswer(answer: String) {
         val state = _state.value
@@ -118,22 +126,21 @@ internal class QuizViewModel @AssistedInject constructor(
     }
 
     /**
-     * Возвращает состояние к началу викторины.
+     * Возвращает состояние викторины к начальному экрану.
      */
     private fun returnToBeginning() {
         _state.update { QuizState.Start }
     }
 
     /**
-     * Обрабатывает навигацию к экрану истории.
-     * Пока не реализовано.
+     * Отправляет навигационный интент для перехода к экрану истории.
      */
     private fun navigateToHistory() {
         sendRootIntent(NavRootIntent.AddToBackStack(Screen.HistoryScreen))
     }
 
     /**
-     *  Возвращает состояние викторины к начальному состоянию.
+     * Возвращает состояние викторины к начальному экрану (повторный запуск).
      */
     private fun tryAgain() {
         _state.update { QuizState.Start }
@@ -141,6 +148,7 @@ internal class QuizViewModel @AssistedInject constructor(
 
     /**
      * Запускает загрузку вопросов викторины и обновляет состояние.
+     * При успешной загрузке устанавливается состояние Quiz, иначе — Error.
      */
     private suspend fun beginQuiz() {
         _state.update { QuizState.Loading }
@@ -151,13 +159,22 @@ internal class QuizViewModel @AssistedInject constructor(
                     currentQuestion = quizzes.data.firstOrNull()
                 )
             }
-
             is ResponseResult.Error -> _state.update { QuizState.Error }
         }
     }
 
+    /**
+     * Фабрика для создания экземпляров [QuizViewModel] с необходимыми параметрами.
+     */
     @AssistedFactory
     interface Factory {
+        /**
+         * Создает экземпляр [QuizViewModel].
+         *
+         * @param isQuizStarted флаг старта викторины
+         * @param sendRootIntent функция для отправки навигационных интентов
+         * @return новый экземпляр [QuizViewModel]
+         */
         fun create(isQuizStarted: Boolean, sendRootIntent: SendRootIntent): QuizViewModel
     }
 }

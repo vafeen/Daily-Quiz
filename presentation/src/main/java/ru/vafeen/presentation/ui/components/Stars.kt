@@ -13,6 +13,16 @@ import androidx.compose.ui.unit.dp
 import ru.vafeen.domain.network.repository.QuizNetworkRepository
 import ru.vafeen.presentation.R
 
+/**
+ * Отображает горизонтальный ряд звезд, часть из которых заполнена.
+ *
+ * Используется для визуального представления количества правильных ответов или
+ * других значений в диапазоне от 0 до общего количества вопросов в викторине.
+ *
+ * @param modifier модификатор для настройки внешнего вида компонента
+ * @param countOfFilledStars количество заполненных (выделенных) звезд
+ * @param size размер каждой звезды (по умолчанию 52.dp)
+ */
 @Composable
 internal fun Stars(
     modifier: Modifier = Modifier,
@@ -34,5 +44,4 @@ internal fun Stars(
             )
         }
     }
-
 }

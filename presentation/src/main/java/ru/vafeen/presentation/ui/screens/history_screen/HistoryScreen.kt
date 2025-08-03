@@ -23,7 +23,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.vafeen.presentation.R
 import ru.vafeen.presentation.navigation.NavRootIntent
 import ru.vafeen.presentation.ui.components.QuizHistoryInfoComponent
@@ -32,9 +31,10 @@ import ru.vafeen.presentation.ui.components.YouNeverTakenAnyQuizzes
 /**
  * Экран истории сессий викторины.
  *
- * Отображает список превью сессий или сообщение с кнопкой, если историй нет.
+ * Отображает список превью сессий викторины, если они есть,
+ * либо сообщение и кнопку для начала новой викторины в случае отсутствия историй.
  *
- * @param viewModel ViewModel экрана истории, по умолчанию через Hilt.
+ * @param sendRootIntent Функция для отправки навигационных интентов в корневой навигационный обработчик.
  */
 @Composable
 internal fun HistoryScreen(

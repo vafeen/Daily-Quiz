@@ -2,7 +2,7 @@ package ru.vafeen.presentation.navigation
 
 /**
  * Навигационные интенты корневого навигационного компонента.
- * Используются для управления навигацией: возврат назад или добавление экрана в стек.
+ * Используются для управления навигацией: возврат назад, добавление экрана в стек или старт викторины.
  */
 internal sealed class NavRootIntent {
 
@@ -18,5 +18,9 @@ internal sealed class NavRootIntent {
      */
     data class AddToBackStack(val screen: Screen) : NavRootIntent()
 
+    /**
+     * Интент для запуска викторины.
+     * Используется для инициирования начала нового сеанса викторины.
+     */
     data object StartTheQuiz : NavRootIntent()
 }
