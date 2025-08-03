@@ -1,5 +1,6 @@
 package ru.vafeen.presentation.ui.screens.history_screen
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -21,20 +22,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpOffset
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -43,7 +39,6 @@ import ru.vafeen.presentation.navigation.SendRootIntent
 import ru.vafeen.presentation.ui.components.QuizHistoryInfoComponent
 import ru.vafeen.presentation.ui.components.YouNeverTakenAnyQuizzes
 import ru.vafeen.presentation.ui.theme.AppTheme
-import ru.vafeen.presentation.utils.pxToDp
 
 /**
  * Экран истории сессий викторины.
@@ -59,16 +54,12 @@ import ru.vafeen.presentation.utils.pxToDp
 internal fun HistoryScreen(
     sendRootIntent: SendRootIntent,
 ) {
-    val context = LocalContext.current
     val viewModel: HistoryViewModel =
         hiltViewModel<HistoryViewModel, HistoryViewModel.Factory>(creationCallback = { factory ->
             factory.create(sendRootIntent)
         })
     val state by viewModel.state.collectAsState()
 
-    var selectedSessionForMenu by remember { mutableStateOf<Long?>(null) }
-    val dropdownExpanded = selectedSessionForMenu != null
-    var intSize by remember { mutableStateOf(IntSize(0, 0)) }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -80,7 +71,7 @@ internal fun HistoryScreen(
             modifier = Modifier
                 .fillMaxWidth()// Затемняем все элементы, кроме выбранного, при открытом меню
                 .graphicsLayer {
-                    alpha = if (dropdownExpanded) 0.5f else 1f
+                    alpha = if (state.selectedSessionId != null) 0.5f else 1f
                 }) {
 
             Text(
@@ -116,21 +107,24 @@ internal fun HistoryScreen(
                     items = state.sessions,
                     key = { it.sessionId }
                 ) { session ->
-                    val isSelected = selectedSessionForMenu == session.sessionId
 
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
                             // Затемняем все элементы, кроме выбранного, при открытом меню
                             .graphicsLayer {
-                                alpha = if (dropdownExpanded && !isSelected) 0.5f else 1f
+                                alpha =
+                                    if (
+                                        state.selectedSessionId != null &&
+                                        state.selectedSessionId != session.sessionId
+                                    ) 0.5f else 1f
                             },
                     ) {
                         session.QuizHistoryInfoComponent(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .onSizeChanged {
-                                    intSize = it
+                                    viewModel.handleIntent(HistoryIntent.UpdateWidth(width = it.width))
                                 },
                             innerModifier = Modifier
                                 // Долгое нажатие — выделить элемент и открыть меню
@@ -141,20 +135,24 @@ internal fun HistoryScreen(
                                         )
                                     },
                                     onLongClick = {
-                                        selectedSessionForMenu = session.sessionId
+                                        viewModel.handleIntent(HistoryIntent.SelectSession(sessionId = session.sessionId))
                                     }
                                 ),
                         )
 
-                        if (isSelected) {
+                        if (state.selectedSessionId != null) {
                             DropdownMenu(
                                 shape = RoundedCornerShape(25.dp),
-                                expanded = dropdownExpanded,
-                                onDismissRequest = { selectedSessionForMenu = null },
+                                expanded = state.selectedSessionId == session.sessionId,
+                                onDismissRequest = {
+                                    viewModel.handleIntent(
+                                        HistoryIntent.SelectSession(null)
+                                    )
+                                },
                                 modifier = Modifier
-                                    .background(Color.White)
-                                    .width((intSize.width.pxToDp(context) * 2 / 3).dp),
-                                offset = DpOffset((intSize.width.pxToDp(context) / 6).dp, 20.dp)
+                                    .background(AppTheme.colors.cardBackground)
+                                    .width((state.widthDp * 2 / 3).dp),
+                                offset = DpOffset((state.widthDp / 6).dp, 20.dp)
                             ) {
                                 DropdownMenuItem(
                                     text = {
@@ -177,7 +175,6 @@ internal fun HistoryScreen(
                                                 session.sessionId
                                             )
                                         )
-                                        selectedSessionForMenu = null
                                     },
                                 )
                             }
@@ -197,7 +194,7 @@ internal fun HistoryScreen(
                     viewModel.handleIntent(HistoryIntent.ReturnToBeginning)
                 }
 
-                androidx.compose.foundation.Image(
+                Image(
                     modifier = Modifier
                         .size(width = 180.dp, height = 40.dp)
                         .align(Alignment.CenterHorizontally),

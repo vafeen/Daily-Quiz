@@ -4,7 +4,8 @@ package ru.vafeen.presentation.ui.screens.history_screen
  * Интенты (намерения пользователя) для экрана истории сессий викторины.
  *
  * Используются для обработки действий пользователя на экране истории,
- * таких как навигация к подробной информации о сессии, возврат к началу и возврат назад.
+ * таких как навигация к подробной информации о сессии, возврат к началу и возврат назад,
+ * а также для удаления сессии и управления состоянием выбора и ширины.
  */
 internal sealed class HistoryIntent {
 
@@ -27,7 +28,23 @@ internal sealed class HistoryIntent {
     data object Back : HistoryIntent()
 
     /**
-     * Интент удаления сессии по id.
+     * Интент удаления сессии по идентификатору.
+     *
+     * @property sessionId Идентификатор сессии, которую необходимо удалить.
      */
     data class DeleteSession(val sessionId: Long) : HistoryIntent()
+
+    /**
+     * Интент обновления ширины в пикселях (например, ширины контейнера экрана).
+     *
+     * @property width Текущая ширина в пикселях.
+     */
+    data class UpdateWidth(val width: Int) : HistoryIntent()
+
+    /**
+     * Интент выбора или снятия выбора сессии (для управления контекстным меню).
+     *
+     * @property sessionId Идентификатор выбранной сессии, либо null если выбор снят.
+     */
+    data class SelectSession(val sessionId: Long?) : HistoryIntent()
 }
