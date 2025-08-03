@@ -70,8 +70,10 @@ internal fun ResultComponent(
                     }
                 ),
                 fontSize = 24.sp,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                color = AppTheme.colors.text,
             )
+            Spacer(modifier = Modifier.height(12.dp))
             Text(
                 text = stringResource(
                     id = when (quizResult) {
@@ -84,7 +86,8 @@ internal fun ResultComponent(
                     }
                 ),
                 fontSize = 16.sp,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                color = AppTheme.colors.text,
             )
             onTryAgainClick?.let { onTryAgainClick ->
                 Spacer(modifier = Modifier.height(64.dp))

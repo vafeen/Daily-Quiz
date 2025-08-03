@@ -26,12 +26,14 @@ import androidx.compose.ui.unit.sp
 import ru.vafeen.domain.models.QuizQuestion
 import ru.vafeen.presentation.R
 import ru.vafeen.presentation.ui.theme.AppTheme
+import ru.vafeen.presentation.utils.secondsToMinSecString
 
 /**
  * Компонент вопроса викторины с вариантами ответов и кнопкой подтверждения выбора.
  *
  * Отображает текущий вопрос викторины с номером, текстом и списком ответов с их текущими состояниями.
  * Также предоставляет кнопку для подтверждения выбранного ответа, если это предусмотрено логикой.
+ * Над текстом вопроса отображается горизонтальный прогресс-бар, показывающий таймер от 0 до 5 минут.
  *
  * @param currentQuestion Текущий объект вопроса викторины, содержащий текст вопроса, ответы,
  * выбранный и правильный ответы.
@@ -51,18 +53,55 @@ internal fun Question(
     chosenAnswer: String?,
     chooseAnswer: ((String) -> Unit)? = null,
     confirmAnswer: (() -> Unit)? = null,
-    isItResult: Boolean? = null
+    isItResult: Boolean? = null,
+    currentSeconds: Long? = null,
+    quantityOfSeconds: Float? = null,
 ) {
+//    // Таймер в секундах
+//    var timerSeconds by remember { mutableIntStateOf(0) }
+//    val maxSeconds = 5 * 60 // 5 минут = 300 секунд
+//
+//    // Запускаем таймер при появлении этого Composable, обновляем каждую секунду
+//    LaunchedEffect(key1 = true) {
+//        while (timerSeconds < maxSeconds) {
+//            delay(1000L)
+//            timerSeconds++
+//        }
+//    }
+
     Card(
         shape = RoundedCornerShape(dimensionResource(R.dimen.card_corner_radius)),
         colors = CardDefaults.cardColors(containerColor = AppTheme.colors.cardBackground)
     ) {
         Column(
-            modifier = Modifier
-                .padding(24.dp),
+            modifier = Modifier.padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
+            if (currentSeconds != null && quantityOfSeconds != null) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = currentSeconds.toInt().secondsToMinSecString(),
+                        color = AppTheme.colors.quizNameText,
+                        fontSize = 12.sp
+                    )
+                    Text(
+                        text = quantityOfSeconds.toInt().secondsToMinSecString(),
+                        color = AppTheme.colors.quizNameText,
+                        fontSize = 12.sp
+                    )
+                }
+                TimerProgressBar(
+                    progress = currentSeconds / quantityOfSeconds,
+                    color = AppTheme.colors.quizNameText
+                )
+            }
 
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Строка с номером вопроса и иконкой состояния
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = if (isItResult != null) Arrangement.SpaceBetween else Arrangement.Center
@@ -82,7 +121,10 @@ internal fun Question(
                     )
                 }
             }
+
             Spacer(modifier = Modifier.height(24.dp))
+
+            // Текст вопроса
             Text(
                 text = currentQuestion.question,
                 textAlign = TextAlign.Center,
@@ -90,7 +132,10 @@ internal fun Question(
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold
             )
+
             Spacer(modifier = Modifier.height(24.dp))
+
+            // Список ответов
             currentQuestion.allAnswers.forEach { answer ->
                 Answer(
                     modifier = Modifier
@@ -122,6 +167,8 @@ internal fun Question(
                     } else null
                 )
             }
+
+            // Кнопка подтверждения ответа
             if (confirmAnswer != null) {
                 RounderCornerButton(
                     modifier = Modifier.fillMaxWidth(),

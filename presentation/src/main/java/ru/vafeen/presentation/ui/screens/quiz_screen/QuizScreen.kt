@@ -15,7 +15,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -38,6 +37,7 @@ import ru.vafeen.presentation.ui.components.Error
 import ru.vafeen.presentation.ui.components.LoadingQuiz
 import ru.vafeen.presentation.ui.components.Question
 import ru.vafeen.presentation.ui.components.ResultComponent
+import ru.vafeen.presentation.ui.components.TimeIsUpDialog
 import ru.vafeen.presentation.ui.components.Welcome
 import ru.vafeen.presentation.ui.theme.AppTheme
 
@@ -77,19 +77,19 @@ internal fun QuizScreen(
                         onClick = {
                             viewModel.handleIntent(QuizIntent.NavigateToHistory)
                         },
-                        colors = ButtonDefaults.buttonColors(containerColor = Color.White)
+                        colors = ButtonDefaults.buttonColors(containerColor = AppTheme.colors.cardBackground)
                     ) {
                         Text(
                             stringResource(R.string.history),
                             fontSize = 12.sp,
-                            color = MaterialTheme.colorScheme.primary
+                            color = AppTheme.colors.background
                         )
                         Spacer(modifier = Modifier.width(12.dp))
                         Icon(
                             modifier = Modifier.size(16.dp),
                             painter = painterResource(R.drawable.history),
                             contentDescription = stringResource(R.string.history),
-                            tint = MaterialTheme.colorScheme.primary
+                            tint = AppTheme.colors.background,
                         )
                     }
                 }
@@ -162,8 +162,15 @@ internal fun QuizScreen(
                         },
                         confirmAnswer = {
                             viewModel.handleIntent(QuizIntent.ConfirmChosenAnswer)
-                        }
+                        },
+                        currentSeconds = it.currentSeconds,
+                        quantityOfSeconds = it.quantityOfSeconds
                     )
+                    if (it.isDialogLoseShown) {
+                        TimeIsUpDialog {
+                            viewModel.handleIntent(QuizIntent.ReturnToBeginning)
+                        }
+                    }
                 }
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
@@ -171,6 +178,7 @@ internal fun QuizScreen(
                     color = Color.White,
                     fontSize = 15.sp
                 )
+
             }
 
             is QuizState.Result -> {

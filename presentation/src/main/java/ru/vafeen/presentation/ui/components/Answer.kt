@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -24,6 +25,7 @@ import ru.vafeen.presentation.ui.components.AnswerState.Chosen
 import ru.vafeen.presentation.ui.components.AnswerState.Correct
 import ru.vafeen.presentation.ui.components.AnswerState.Free
 import ru.vafeen.presentation.ui.components.AnswerState.Incorrect
+import ru.vafeen.presentation.ui.theme.AppTheme
 import ru.vafeen.presentation.ui.theme.DarkBlue
 import ru.vafeen.presentation.ui.theme.DarkGreen
 
@@ -55,7 +57,8 @@ internal fun Answer(
             AnswerState.Correct -> BorderStroke(width = borderWidth, color = DarkGreen)
             AnswerState.Incorrect -> BorderStroke(width = borderWidth, color = Color.Red)
         },
-        modifier = modifier
+        modifier = modifier,
+        colors = CardDefaults.cardColors(containerColor = AppTheme.colors.cardOnCardBackground)
     ) {
         Row(
             modifier = Modifier
