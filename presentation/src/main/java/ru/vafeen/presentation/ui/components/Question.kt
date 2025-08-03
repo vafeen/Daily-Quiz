@@ -57,17 +57,6 @@ internal fun Question(
     currentSeconds: Long? = null,
     quantityOfSeconds: Float? = null,
 ) {
-//    // Таймер в секундах
-//    var timerSeconds by remember { mutableIntStateOf(0) }
-//    val maxSeconds = 5 * 60 // 5 минут = 300 секунд
-//
-//    // Запускаем таймер при появлении этого Composable, обновляем каждую секунду
-//    LaunchedEffect(key1 = true) {
-//        while (timerSeconds < maxSeconds) {
-//            delay(1000L)
-//            timerSeconds++
-//        }
-//    }
 
     Card(
         shape = RoundedCornerShape(dimensionResource(R.dimen.card_corner_radius)),
@@ -93,6 +82,7 @@ internal fun Question(
                         fontSize = 12.sp
                     )
                 }
+                Spacer(modifier = Modifier.height(8.dp))
                 TimerProgressBar(
                     progress = currentSeconds / quantityOfSeconds,
                     color = AppTheme.colors.quizNameText

@@ -15,11 +15,11 @@ fun Int.pxToDp(context: Context): Float = this / context.resources.displayMetric
  * Форматирует целочисленное значение секунд в строку формата "минуты:секунды" с ведущим нулём у секунд.
  *
  * Пример:
- * 90.secondsToMinSecString() -> "1:30"
- * 5.secondsToMinSecString() -> "0:05"
+ * 90.secondsToMinSecString() -> "01:30"
+ * 5.secondsToMinSecString() -> "00:05"
  *
  * @receiver Количество секунд в формате Int.
  * @return Строка с временем в формате "минуты:секунды".
  */
-internal fun Int.secondsToMinSecString(): String = "%d:%02d".format(this / 60, this % 60)
+internal fun Int.secondsToMinSecString(): String = "%02d:%02d".format(this / 60, this % 60)
 
