@@ -1,5 +1,6 @@
 package ru.vafeen.presentation.ui.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
@@ -12,6 +13,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -21,6 +23,8 @@ import ru.vafeen.presentation.ui.components.AnswerState.Chosen
 import ru.vafeen.presentation.ui.components.AnswerState.Correct
 import ru.vafeen.presentation.ui.components.AnswerState.Free
 import ru.vafeen.presentation.ui.components.AnswerState.Incorrect
+import ru.vafeen.presentation.ui.theme.DarkBlue
+import ru.vafeen.presentation.ui.theme.DarkGreen
 
 
 /**
@@ -41,8 +45,15 @@ internal fun Answer(
     answerState: AnswerState,
     onClick: (() -> Unit)? = null
 ) {
+    val borderWidth = 1.dp
     Card(
         shape = RoundedCornerShape(16.dp),
+        border = when (answerState) {
+            AnswerState.Free -> null
+            AnswerState.Chosen -> BorderStroke(width = borderWidth, color = DarkBlue)
+            AnswerState.Correct -> BorderStroke(width = borderWidth, color = DarkGreen)
+            AnswerState.Incorrect -> BorderStroke(width = borderWidth, color = Color.Red)
+        },
         modifier = if (onClick != null) modifier.clickable(onClick = onClick) else modifier
     ) {
         Row(modifier = Modifier.padding(16.dp)) {
