@@ -11,11 +11,9 @@ internal sealed class Screen : NavKey {
 
     /**
      * Экран викторины.
-     *
-     * @property isQuizStarted флаг, указывающий, началась ли викторина (по умолчанию false)
      */
     @Serializable
-    data class QuizScreen(val isQuizStarted: Boolean = false) : Screen()
+    data object QuizScreen : Screen()
 
     /**
      * Экран истории.

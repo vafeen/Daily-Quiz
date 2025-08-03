@@ -38,7 +38,7 @@ internal sealed class QuizState {
      */
     data class Quiz(
         val chosenAnswer: String? = null,
-        val currentQuestion: QuizQuestion? = null,
+        val currentQuestion: QuizQuestion,
         val questions: List<QuizQuestion> = emptyList(),
         val passedQuestions: List<QuizQuestion> = emptyList(),
     ) : QuizState()

@@ -6,6 +6,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityRetainedComponent
 import ru.vafeen.domain.local_database.repository.QuizResultLocalRepository
 import ru.vafeen.domain.local_database.usecase.GetAllSessionPreviewUseCase
+import ru.vafeen.domain.local_database.usecase.GetQuizSessionResultUseCase
 import ru.vafeen.domain.local_database.usecase.SaveQuizSessionResultUseCase
 
 @Module
@@ -20,4 +21,9 @@ internal class DatabaseUseCaseModule {
     fun provideGetAllSessionPreviewUseCase(
         quizResultLocalRepository: QuizResultLocalRepository
     ): GetAllSessionPreviewUseCase = GetAllSessionPreviewUseCase(quizResultLocalRepository)
+
+    @Provides
+    fun provideGetQuizSessionResultUseCase(
+        quizResultLocalRepository: QuizResultLocalRepository
+    ): GetQuizSessionResultUseCase = GetQuizSessionResultUseCase(quizResultLocalRepository)
 }

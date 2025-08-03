@@ -23,7 +23,7 @@ import ru.vafeen.presentation.ui.screens.quiz_screen.QuizScreen
 @Composable
 internal fun NavRoot() {
     val viewModel = hiltViewModel<NavRootViewModel>()
-    val backStack = rememberNavBackStack(Screen.QuizScreen(isQuizStarted = false))
+    val backStack = rememberNavBackStack(Screen.QuizScreen)
 
     LaunchedEffect(null) {
         viewModel.effects.collect { effect ->
@@ -42,7 +42,7 @@ internal fun NavRoot() {
         },
         entryProvider = entryProvider {
             entry<Screen.QuizScreen> {
-                QuizScreen(isQuizStarted = it.isQuizStarted) { intent ->
+                QuizScreen() { intent ->
                     viewModel.handleIntent(intent)
                 }
             }

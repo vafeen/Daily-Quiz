@@ -21,18 +21,24 @@ import androidx.compose.ui.unit.sp
 import ru.vafeen.domain.models.QuizResult
 import ru.vafeen.domain.network.repository.QuizNetworkRepository
 import ru.vafeen.presentation.R
-import ru.vafeen.presentation.ui.screens.quiz_screen.QuizState
 import ru.vafeen.presentation.ui.theme.StarTextColor
 
 /**
  * Компонент отображения результата викторины с рейтингом, количеством правильных ответов,
  * описанием и кнопкой повторного запуска викторины.
  *
- * @param state Текущее состояние результата викторины.
- * @param onTryAgainClick Лямбда, вызываемая при нажатии кнопки "Попробовать снова".
+ * Отображает количество правильных ответов в виде звезд,
+ * числовой счет и текстовые заголовок и описание, зависящие от результата.
+ * При наличии обработчика [onTryAgainClick] отображается кнопка "Попробовать снова".
+ *
+ * @param quizResult Текущий результат викторины, содержащий количество правильных ответов и рейтинг.
+ * @param onTryAgainClick Лямбда, вызываемая при нажатии кнопки "Попробовать снова"; если null, кнопка не показывается.
  */
 @Composable
-internal fun ResultComponent(state: QuizState.Result, onTryAgainClick: () -> Unit) {
+internal fun ResultComponent(
+    quizResult: QuizResult,
+    onTryAgainClick: (() -> Unit)? = null
+) {
     Card(
         shape = RoundedCornerShape(dimensionResource(R.dimen.card_corner_radius)),
     ) {
@@ -40,10 +46,10 @@ internal fun ResultComponent(state: QuizState.Result, onTryAgainClick: () -> Uni
             modifier = Modifier.padding(vertical = 32.dp, horizontal = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Stars(modifier = Modifier.fillMaxWidth(), state.quizResult.correctAnswers)
+            Stars(modifier = Modifier.fillMaxWidth(), quizResult.correctAnswers)
             Spacer(modifier = Modifier.height(24.dp))
             Text(
-                text = "${state.quizResult.correctAnswers} " +
+                text = "${quizResult.correctAnswers} " +
                         stringResource(R.string.from) + " " +
                         QuizNetworkRepository.COUNT_OF_QUESTIONS_IN_ONE_QUIZ,
                 fontWeight = FontWeight.Bold,
@@ -53,7 +59,7 @@ internal fun ResultComponent(state: QuizState.Result, onTryAgainClick: () -> Uni
             Spacer(modifier = Modifier.height(24.dp))
             Text(
                 text = stringResource(
-                    id = when (state.quizResult) {
+                    id = when (quizResult) {
                         QuizResult.Score0Of5 -> R.string.rating_0_title
                         QuizResult.Score1Of5 -> R.string.rating_1_title
                         QuizResult.Score2Of5 -> R.string.rating_2_title
@@ -67,7 +73,7 @@ internal fun ResultComponent(state: QuizState.Result, onTryAgainClick: () -> Uni
             )
             Text(
                 text = stringResource(
-                    id = when (state.quizResult) {
+                    id = when (quizResult) {
                         QuizResult.Score0Of5 -> R.string.rating_0_description
                         QuizResult.Score1Of5 -> R.string.rating_1_description
                         QuizResult.Score2Of5 -> R.string.rating_2_description
@@ -79,14 +85,16 @@ internal fun ResultComponent(state: QuizState.Result, onTryAgainClick: () -> Uni
                 fontSize = 16.sp,
                 textAlign = TextAlign.Center
             )
-            Spacer(modifier = Modifier.height(64.dp))
-            RounderCornerButton(
-                onClick = onTryAgainClick,
-                containerColor = MaterialTheme.colorScheme.primary
-            ) {
-                Text(
-                    text = stringResource(R.string.try_again).uppercase()
-                )
+            onTryAgainClick?.let { onTryAgainClick ->
+                Spacer(modifier = Modifier.height(64.dp))
+                RounderCornerButton(
+                    onClick = onTryAgainClick,
+                    containerColor = MaterialTheme.colorScheme.primary
+                ) {
+                    Text(
+                        text = stringResource(R.string.try_again).uppercase()
+                    )
+                }
             }
         }
     }

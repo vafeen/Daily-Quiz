@@ -37,10 +37,4 @@ internal sealed class QuizIntent {
      * Отправляется, когда пользователь подтверждает свой выбор.
      */
     object ConfirmChosenAnswer : QuizIntent()
-
-    /**
-     * Интент повторной попытки пройти викторину.
-     * Используется при нажатии кнопки "Попробовать снова".
-     */
-    object TryAgain : QuizIntent()
 }

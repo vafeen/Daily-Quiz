@@ -2,6 +2,9 @@ package ru.vafeen.presentation.ui.screens.history_screen
 
 /**
  * Интенты (намерения пользователя) для экрана истории сессий викторины.
+ *
+ * Используются для обработки действий пользователя на экране истории,
+ * таких как навигация к подробной информации о сессии, возврат к началу и возврат назад.
  */
 internal sealed class HistoryIntent {
 
@@ -13,7 +16,13 @@ internal sealed class HistoryIntent {
     data class NavigateToSession(val id: Long) : HistoryIntent()
 
     /**
-     * Начать новую сессию викторины.
+     * Интент возврата к начальному экрану викторины.
+     * Отправляется при возврате пользователя к началу приложения или старту викторины.
      */
-    object StartQuiz : HistoryIntent()
+    data object ReturnToBeginning : HistoryIntent()
+
+    /**
+     * Интент навигации назад (эквивалент нажатия кнопки "назад").
+     */
+    data object Back : HistoryIntent()
 }

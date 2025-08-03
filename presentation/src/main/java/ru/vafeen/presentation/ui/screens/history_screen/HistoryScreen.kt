@@ -2,6 +2,7 @@ package ru.vafeen.presentation.ui.screens.history_screen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,6 +10,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -24,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import ru.vafeen.presentation.R
-import ru.vafeen.presentation.navigation.NavRootIntent
+import ru.vafeen.presentation.navigation.SendRootIntent
 import ru.vafeen.presentation.ui.components.QuizHistoryInfoComponent
 import ru.vafeen.presentation.ui.components.YouNeverTakenAnyQuizzes
 
@@ -38,7 +41,7 @@ import ru.vafeen.presentation.ui.components.YouNeverTakenAnyQuizzes
  */
 @Composable
 internal fun HistoryScreen(
-    sendRootIntent: (NavRootIntent) -> Unit,
+    sendRootIntent: SendRootIntent,
 ) {
     val viewModel: HistoryViewModel =
         hiltViewModel<HistoryViewModel, HistoryViewModel.Factory>(creationCallback = { factory ->
@@ -57,12 +60,26 @@ internal fun HistoryScreen(
                 .padding(horizontal = 27.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                modifier = Modifier.padding(top = 32.dp, bottom = 40.dp),
-                text = stringResource(R.string.history),
-                fontSize = 32.sp,
-                fontWeight = FontWeight.Bold
-            )
+            Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth()) {
+
+                Text(
+                    modifier = Modifier.padding(top = 32.dp, bottom = 40.dp),
+                    text = stringResource(R.string.history),
+                    fontSize = 32.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                IconButton(
+                    modifier = Modifier
+                        .align(Alignment.CenterStart)
+                        .size(24.dp),
+                    onClick = { viewModel.handleIntent(HistoryIntent.Back) }
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.arrow_back),
+                        contentDescription = stringResource(R.string.back)
+                    )
+                }
+            }
 
             if (state.sessions.isNotEmpty()) {
                 LazyColumn(
@@ -93,7 +110,7 @@ internal fun HistoryScreen(
                     verticalArrangement = Arrangement.SpaceBetween
                 ) {
                     YouNeverTakenAnyQuizzes {
-                        viewModel.handleIntent(HistoryIntent.StartQuiz)
+                        viewModel.handleIntent(HistoryIntent.ReturnToBeginning)
                     }
 
                     Image(

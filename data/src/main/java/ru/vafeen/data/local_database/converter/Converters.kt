@@ -79,7 +79,7 @@ internal fun QuizSessionEntity.toDomainPreview(months: List<String>): QuizSessio
  * @param months Список названий месяцев, начиная с января (индекс 0).
  * @return Строка с форматом "день месяц", например "9 июля".
  */
-private fun formatDate(dateTime: LocalDateTime, months: List<String>): String {
+internal fun formatDate(dateTime: LocalDateTime, months: List<String>): String {
     val day = dateTime.dayOfMonth
     val monthIndex = dateTime.monthValue - 1
     val monthName = months.getOrNull(monthIndex) ?: "?"
@@ -92,7 +92,7 @@ private fun formatDate(dateTime: LocalDateTime, months: List<String>): String {
  * @param dateTime Дата и время, из которых берутся часы и минуты.
  * @return Строка с форматом "час:минуты", например "9:05" или "15:30".
  */
-private fun formatTime(dateTime: LocalDateTime): String {
+internal fun formatTime(dateTime: LocalDateTime): String {
     val hour = dateTime.hour
     val minute = dateTime.minute
     return if (minute < 10) "$hour:0$minute" else "$hour:$minute"

@@ -17,10 +17,4 @@ internal sealed class NavRootIntent {
      * @property screen экран, который необходимо добавить в стек навигации
      */
     data class AddToBackStack(val screen: Screen) : NavRootIntent()
-
-    /**
-     * Интент для запуска викторины.
-     * Используется для инициирования начала нового сеанса викторины.
-     */
-    data object StartTheQuiz : NavRootIntent()
 }

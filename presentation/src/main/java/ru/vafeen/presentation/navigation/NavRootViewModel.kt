@@ -42,7 +42,6 @@ internal class NavRootViewModel @Inject constructor() : ViewModel() {
             when (intent) {
                 is NavRootIntent.AddToBackStack -> addToBackStack(intent.screen)
                 NavRootIntent.Back -> back()
-                NavRootIntent.StartTheQuiz -> addToBackStack(Screen.QuizScreen(isQuizStarted = true))
             }
         }
     }

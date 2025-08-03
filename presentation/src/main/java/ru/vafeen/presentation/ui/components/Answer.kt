@@ -17,7 +17,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ru.vafeen.presentation.R
-import ru.vafeen.presentation.utils.AnswerState
+import ru.vafeen.presentation.ui.components.AnswerState.Chosen
+import ru.vafeen.presentation.ui.components.AnswerState.Correct
+import ru.vafeen.presentation.ui.components.AnswerState.Free
+import ru.vafeen.presentation.ui.components.AnswerState.Incorrect
+
 
 /**
  * Компонент отдельного варианта ответа в вопросе викторины.
@@ -61,4 +65,19 @@ internal fun Answer(
             )
         }
     }
+}
+
+/**
+ * Перечисление состояний ответа в викторине.
+ *
+ * @property Free Ответ ещё не выбран пользователем.
+ * @property Chosen Ответ выбран пользователем, но ещё не проверен.
+ * @property Correct Ответ выбран и подтверждён как правильный.
+ * @property Incorrect Ответ выбран и подтверждён как неправильный.
+ */
+internal enum class AnswerState {
+    Free,
+    Chosen,
+    Correct,
+    Incorrect
 }

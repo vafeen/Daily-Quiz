@@ -1,5 +1,6 @@
 package ru.vafeen.presentation.ui.screens.quiz_screen
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,18 +20,21 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import ru.vafeen.presentation.R
-import ru.vafeen.presentation.navigation.NavRootIntent
+import ru.vafeen.presentation.navigation.SendRootIntent
 import ru.vafeen.presentation.ui.components.Error
 import ru.vafeen.presentation.ui.components.LoadingQuiz
 import ru.vafeen.presentation.ui.components.Question
@@ -41,22 +45,20 @@ import ru.vafeen.presentation.ui.components.Welcome
  * Компонент экрана викторины, отображающий различные состояния викторины,
  * управляемые через [QuizViewModel].
  *
- * @param isQuizStarted флаг, указывающий, началась ли викторина
- * @param sendRootIntent функция для отправки навигационных интентов в корневой навигационный обработчик
+ * @param sendRootIntent Функция для отправки навигационных интентов в корневой навигационный обработчик.
  */
 @Composable
 internal fun QuizScreen(
-    isQuizStarted: Boolean,
-    sendRootIntent: (NavRootIntent) -> Unit
+    sendRootIntent: SendRootIntent,
 ) {
     val viewModel: QuizViewModel =
         hiltViewModel<QuizViewModel, QuizViewModel.Factory>(creationCallback = { factory ->
             factory.create(
-                isQuizStarted = isQuizStarted,
                 sendRootIntent = sendRootIntent
             )
         })
     val state by viewModel.state.collectAsState()
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.primary
@@ -107,6 +109,9 @@ internal fun QuizScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     if (state is QuizState.Quiz) {
+                        BackHandler {
+                            viewModel.handleIntent(QuizIntent.ReturnToBeginning)
+                        }
                         IconButton(
                             modifier = Modifier
                                 .align(Alignment.CenterStart)
@@ -150,52 +155,50 @@ internal fun QuizScreen(
 
                 is QuizState.Quiz -> {
                     Spacer(modifier = Modifier.height(40.dp))
-                    Question(
-                        state = state as QuizState.Quiz,
-                        chooseAnswer = { answer ->
-                            viewModel.handleIntent(QuizIntent.ChoseAnswer(answer))
-                        },
-                        confirmAnswer = {
-                            viewModel.handleIntent(QuizIntent.ConfirmChosenAnswer)
-                        }
-                    )
+                    (state as QuizState.Quiz).let {
+                        Question(
+                            currentQuestion = it.currentQuestion,
+                            numberOfCurrentQuestion = it.passedQuestions.size + 1,
+                            quantityOfQuestions = it.questions.size + it.passedQuestions.size,
+                            chosenAnswer = it.chosenAnswer,
+                            chooseAnswer = { answer ->
+                                viewModel.handleIntent(QuizIntent.ChoseAnswer(answer))
+                            },
+                            confirmAnswer = {
+                                viewModel.handleIntent(QuizIntent.ConfirmChosenAnswer)
+                            }
+                        )
+                    }
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
                         text = stringResource(R.string.cant_return_to_previous_questions),
                         color = Color.White,
-                        fontSize = 10.sp
+                        fontSize = 15.sp
                     )
                 }
 
                 is QuizState.Result -> {
-                    Spacer(modifier = Modifier.height(32.dp))
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        IconButton(
-                            modifier = Modifier
-                                .align(Alignment.CenterStart)
-                                .size(24.dp),
-                            onClick = { viewModel.handleIntent(QuizIntent.ReturnToBeginning) }
-                        ) {
-                            Icon(
-                                painter = painterResource(R.drawable.arrow_back),
-                                contentDescription = stringResource(R.string.back)
-                            )
-                        }
-
-                        Text(
-                            text = stringResource(R.string.results),
-                            fontSize = 32.sp,
-                            fontWeight = FontWeight.Bold
-                        )
+                    BackHandler {
+                        viewModel.handleIntent(QuizIntent.ReturnToBeginning)
                     }
+                    Spacer(modifier = Modifier.height(32.dp))
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center,
+                        text = stringResource(R.string.results),
+                        fontSize = 32.sp,
+                        fontWeight = FontWeight.Bold
+                    )
                     Spacer(modifier = Modifier.height(40.dp))
+                    val quizStateResult by remember {
+                        derivedStateOf {
+                            state as QuizState.Result
+                        }
+                    }
                     ResultComponent(
-                        state = state as QuizState.Result,
+                        quizResult = quizStateResult.quizResult,
                         onTryAgainClick = {
-                            viewModel.handleIntent(QuizIntent.BeginQuiz)
+                            viewModel.handleIntent(QuizIntent.ReturnToBeginning)
                         }
                     )
                 }

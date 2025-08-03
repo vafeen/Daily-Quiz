@@ -23,14 +23,12 @@ import ru.vafeen.presentation.navigation.SendRootIntent
 /**
  * ViewModel экрана викторины, управляющая состояниями викторины и обработкой пользовательских действий.
  *
- * @property isQuizStarted флаг, указывающий, началась ли викторина при запуске ViewModel
  * @property sendRootIntent функция для отправки навигационных интентов в корневой навигационный обработчик
- * @property getQuizUseCase юзкейc для получения вопросов викторины
- * @property saveQuizSessionResultUseCase юзкейc для сохранения результатов сессии викторины
+ * @property getQuizUseCase юзкейс для получения вопросов викторины
+ * @property saveQuizSessionResultUseCase юзкейс для сохранения результатов сессии викторины
  */
 @HiltViewModel(assistedFactory = QuizViewModel.Factory::class)
 internal class QuizViewModel @AssistedInject constructor(
-    @Assisted private val isQuizStarted: Boolean,
     @Assisted private val sendRootIntent: SendRootIntent,
     private val getQuizUseCase: GetQuizUseCase,
     private val saveQuizSessionResultUseCase: SaveQuizSessionResultUseCase,
@@ -55,18 +53,10 @@ internal class QuizViewModel @AssistedInject constructor(
                 QuizIntent.ReturnToBeginning -> returnToBeginning()
                 is QuizIntent.ChoseAnswer -> choseAnswer(intent.answer)
                 QuizIntent.ConfirmChosenAnswer -> confirmAnswer()
-                QuizIntent.TryAgain -> tryAgain()
             }
         }
     }
 
-    init {
-        viewModelScope.launch(Dispatchers.IO) {
-            if (isQuizStarted) {
-                beginQuiz()
-            }
-        }
-    }
 
     /**
      * Подтверждает выбранный ответ, обновляет состояние текущего вопроса либо переходит к следующему вопросу.
@@ -76,38 +66,38 @@ internal class QuizViewModel @AssistedInject constructor(
         val state = _state.value
         if (state is QuizState.Quiz) {
             val currentQuestion = state.currentQuestion
-            if (currentQuestion != null) {
-                if (currentQuestion.chosenAnswer == null) {
-                    _state.update {
-                        state.copy(currentQuestion = currentQuestion.copy(chosenAnswer = state.chosenAnswer))
-                    }
-                } else {
-                    val newStateWithNewQuestions = state.copy(
-                        questions = state.questions.filter { it.question != state.currentQuestion.question },
-                        passedQuestions = state.passedQuestions + state.currentQuestion
-                    )
-                    val newCurrentQuestion = newStateWithNewQuestions.questions.firstOrNull()
+            if (currentQuestion.chosenAnswer == null) {
+                _state.update {
+                    state.copy(currentQuestion = currentQuestion.copy(chosenAnswer = state.chosenAnswer))
+                }
+            } else {
+                val newStateWithNewQuestions = state.copy(
+                    questions = state.questions.filter { it.question != state.currentQuestion.question },
+                    passedQuestions = state.passedQuestions + state.currentQuestion
+                )
+                // взяли новый потенциальный вопрос
+                val newCurrentQuestion = newStateWithNewQuestions.questions.firstOrNull()
+
+                if (newCurrentQuestion != null) {
                     val newStateWithNewQuestionsAndAnswer = newStateWithNewQuestions.copy(
                         currentQuestion = newCurrentQuestion,
                         chosenAnswer = null
                     )
                     _state.update { newStateWithNewQuestionsAndAnswer }
-                    if (newCurrentQuestion == null) {
-                        val countOfRightAnswers = newStateWithNewQuestionsAndAnswer
-                            .passedQuestions
-                            .count { question -> question.chosenAnswer == question.correctAnswer }
-
-                        _state.update {
-                            QuizState.Result(
-                                quizResult = QuizResult.getByCount(countOfRightAnswers)
-                            )
-                        }
-
-                        saveQuizSessionResultUseCase.invoke(
-                            countOfRightAnswers,
-                            questions = newStateWithNewQuestionsAndAnswer.passedQuestions
+                } else {
+                    val countOfRightAnswers = newStateWithNewQuestions
+                        .passedQuestions
+                        .count { question -> question.chosenAnswer == question.correctAnswer }
+                    _state.update {
+                        QuizState.Result(
+                            quizResult = QuizResult.getByCount(countOfRightAnswers)
                         )
                     }
+
+                    saveQuizSessionResultUseCase.invoke(
+                        countOfRightAnswers,
+                        questions = newStateWithNewQuestions.passedQuestions
+                    )
                 }
             }
         }
@@ -156,9 +146,10 @@ internal class QuizViewModel @AssistedInject constructor(
             is ResponseResult.Success<List<QuizQuestion>> -> _state.update {
                 QuizState.Quiz(
                     questions = quizzes.data,
-                    currentQuestion = quizzes.data.firstOrNull()
+                    currentQuestion = quizzes.data.first()
                 )
             }
+
             is ResponseResult.Error -> _state.update { QuizState.Error }
         }
     }
@@ -171,10 +162,9 @@ internal class QuizViewModel @AssistedInject constructor(
         /**
          * Создает экземпляр [QuizViewModel].
          *
-         * @param isQuizStarted флаг старта викторины
          * @param sendRootIntent функция для отправки навигационных интентов
          * @return новый экземпляр [QuizViewModel]
          */
-        fun create(isQuizStarted: Boolean, sendRootIntent: SendRootIntent): QuizViewModel
+        fun create(sendRootIntent: SendRootIntent): QuizViewModel
     }
 }
