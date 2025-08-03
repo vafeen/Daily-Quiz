@@ -26,4 +26,19 @@
     <string name="try_again">начать заново</string>
     <string name="cant_return_to_previous_questions">Вернуться к предыдущим вопросам нельзя</string>
     <string name="results">Результаты</string>
+    <string-array name="months">
+        <item>января</item>
+        <item>февраля</item>
+        <item>марта</item>
+        <item>апреля</item>
+        <item>мая</item>
+        <item>июня</item>
+        <item>июля</item>
+        <item>августа</item>
+        <item>сентября</item>
+        <item>октября</item>
+        <item>ноября</item>
+        <item>декабря</item>
+    </string-array>
+    <string name="you_never_taken_quizzes">Вы еще не проходили \nни одной викторины</string>
 </resources>

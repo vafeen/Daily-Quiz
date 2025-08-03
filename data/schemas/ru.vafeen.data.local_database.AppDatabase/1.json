@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "1a014b8f883c7e58153f50f956fa2945",
+    "identityHash": "1ad1e8c433640dbd113530ed8b384a4d",
     "entities": [
       {
         "tableName": "quiz_sessions",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`sessionId` INTEGER NOT NULL, `dateTime` INTEGER NOT NULL, `name` TEXT NOT NULL, `countOfRightAnswers` INTEGER NOT NULL, PRIMARY KEY(`sessionId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`sessionId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `dateTime` INTEGER NOT NULL, `name` TEXT NOT NULL, `countOfRightAnswers` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "sessionId",
@@ -34,7 +34,7 @@
           }
         ],
         "primaryKey": {
-          "autoGenerate": false,
+          "autoGenerate": true,
           "columnNames": [
             "sessionId"
           ]
@@ -127,7 +127,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1a014b8f883c7e58153f50f956fa2945')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1ad1e8c433640dbd113530ed8b384a4d')"
     ]
   }
 }

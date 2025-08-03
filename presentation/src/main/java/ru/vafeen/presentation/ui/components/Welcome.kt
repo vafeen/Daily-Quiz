@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -41,7 +42,10 @@ internal fun Welcome(onBegin: () -> Unit) {
                     textAlign = TextAlign.Center
                 )
                 Spacer(modifier = Modifier.height(40.dp))
-                RounderCornerButton(onClick = onBegin) {
+                RounderCornerButton(
+                    onClick = onBegin,
+                    containerColor = MaterialTheme.colorScheme.primary
+                ) {
                     Text(
                         text = stringResource(R.string.start_the_quiz).uppercase(),
                         fontSize = 16.sp,

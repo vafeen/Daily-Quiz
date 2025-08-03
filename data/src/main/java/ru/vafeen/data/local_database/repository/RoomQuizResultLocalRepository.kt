@@ -12,7 +12,6 @@ import ru.vafeen.domain.models.QuizQuestion
 import ru.vafeen.domain.models.QuizSessionPreview
 import ru.vafeen.domain.models.QuizSessionResult
 import java.time.LocalDateTime
-import java.time.ZoneId
 import javax.inject.Inject
 
 /**
@@ -29,51 +28,52 @@ internal class RoomQuizResultLocalRepository @Inject constructor(
     /**
      * Получить поток со списком превью всех сессий из базы данных.
      *
-     * Для быстрого обращения без загрузки вложенных результатов вопросов.
-     *
+     * @param months Список названий месяцев (индексируется с 0 — январь) для форматирования даты.
      * @return [Flow] списка [QuizSessionPreview].
      */
-    override fun getAllSessionPreviews(): Flow<List<QuizSessionPreview>> =
+    override fun getAllSessionPreviews(months: List<String>): Flow<List<QuizSessionPreview>> =
         quizDao.getAllSessions()
-            .map { list ->
-                list.map {
-                    it.toDomainPreview()
-                }
-            }
+            .map { list -> list.map { it.toDomainPreview(months) } }
 
     /**
-     * Получить полную сессию викторины с результатами по ID.
+     * Получить полную сессию викторины с результатами по идентификатору.
      *
-     * @param sessionId Идентификатор сессии (миллисекунды).
-     * @return [QuizSessionResult] с вложенными результатами или null, если не найдена.
+     * @param sessionId Идентификатор сессии.
+     * @return [QuizSessionResult] с вложенными результатами или null, если сессия не найдена.
      */
     override suspend fun getSessionById(sessionId: Long): QuizSessionResult? =
         quizDao.getSessionWithResults(sessionId)?.toDomain()
 
     /**
-     * Сохранить сессию викторины, преобразуя входные параметры в сущности Room.
+     * Сохранить сессию викторины, выполняя следующие шаги:
+     * 1. Вставить сессию с пустым именем для автогенерации ID.
+     * 2. Обновить имя сессии на "Quiz $sessionId".
+     * 3. Вставить связанные вопросы с установленным sessionId.
      *
      * @param countOfRightAnswers Количество правильных ответов в сессии.
      * @param questions Список вопросов викторины.
      */
     override suspend fun saveSession(countOfRightAnswers: Int, questions: List<QuizQuestion>) {
         val now = LocalDateTime.now()
-        val sessionId = now.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
 
+        // 1. Вставка сессии с пустым именем
         val sessionEntity = QuizSessionEntity(
-            sessionId = sessionId,
+            sessionId = 0,  // 0 для автогенерации
             dateTime = now,
-            name = "Quiz $now",
+            name = "",
             countOfRightAnswers = countOfRightAnswers
         )
+        val generatedSessionId = quizDao.insertSession(sessionEntity)
 
+        // 2. Обновление имени сессии по сгенерированному ID
+        quizDao.updateSessionName(generatedSessionId, "Quiz $generatedSessionId")
+
+        // 3. Вставка вопросов с правильным sessionId
         val questionEntities = questions.map { question ->
-            question.toEntity(sessionId)
+            question.toEntity(generatedSessionId)
         }
-
-        quizDao.insertSessionWithResults(sessionEntity, questionEntities)
+        quizDao.insertQuestions(questionEntities)
     }
-
 
     /**
      * Удалить сессию викторины по идентификатору.

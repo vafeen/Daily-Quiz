@@ -1,21 +1,18 @@
 package ru.vafeen.presentation.ui.components
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -43,20 +40,7 @@ internal fun ResultComponent(state: QuizState.Result, onTryAgainClick: () -> Uni
             modifier = Modifier.padding(vertical = 32.dp, horizontal = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                repeat(QuizNetworkRepository.COUNT_OF_QUESTIONS_IN_ONE_QUIZ) { index ->
-                    Image(
-                        painter = painterResource(
-                            if (index < state.quizResult.correctAnswers) R.drawable.filled_star
-                            else R.drawable.star
-                        ),
-                        contentDescription = stringResource(R.string.star)
-                    )
-                }
-            }
+            Stars(modifier = Modifier.fillMaxWidth(), state.quizResult.correctAnswers)
             Spacer(modifier = Modifier.height(24.dp))
             Text(
                 text = "${state.quizResult.correctAnswers} " +
@@ -96,7 +80,10 @@ internal fun ResultComponent(state: QuizState.Result, onTryAgainClick: () -> Uni
                 textAlign = TextAlign.Center
             )
             Spacer(modifier = Modifier.height(64.dp))
-            RounderCornerButton(onClick = onTryAgainClick) {
+            RounderCornerButton(
+                onClick = onTryAgainClick,
+                containerColor = MaterialTheme.colorScheme.primary
+            ) {
                 Text(
                     text = stringResource(R.string.try_again).uppercase()
                 )

@@ -21,7 +21,7 @@ interface QuizResultLocalRepository {
      *
      * @return [Flow] списка [QuizSessionPreview].
      */
-    fun getAllSessionPreviews(): Flow<List<QuizSessionPreview>>
+    fun getAllSessionPreviews(months: List<String>): Flow<List<QuizSessionPreview>>
 
     /**
      * Получить полную сессию викторины с результатами по идентификатору.

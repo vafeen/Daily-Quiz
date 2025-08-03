@@ -14,7 +14,7 @@ import java.time.LocalDateTime
  */
 @Entity(tableName = "quiz_sessions")
 internal data class QuizSessionEntity(
-    @PrimaryKey val sessionId: Long,
+    @PrimaryKey(autoGenerate = true) val sessionId: Long = 0,
     val dateTime: LocalDateTime,
     val name: String,
     val countOfRightAnswers: Int
